@@ -5,14 +5,12 @@ import mapboxgl from "mapbox-gl";
 import "./App.css";
 import fetchData from "./api/fetchData";
 import Marker from "./components/Marker";
-import Popup from "./components/Popup";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZGFubnltMWNoYWVsIiwiYSI6ImNraTh4dHZ0cjBhZnkydGxjbXNpdTIycm0ifQ.j5rP6APNQdHY1j42awkssQ";
 
 function App() {
   const mapContainerRef = useRef(null);
-  const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }));
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -30,19 +28,20 @@ function App() {
       results.items.forEach((result) => {
         const { geometry, properties } = result;
         const markerNode = document.createElement("div");
+
         ReactDOM.render(<Marker id={properties.id} />, markerNode);
-
-        map.on("click", (e) => {
-          const popupNode = document.createElement("div");
-          ReactDOM.render(<Popup props={properties}/>, popupNode);
-          popUpRef.current
-            .setLngLat(e.lngLat)
-            .setDOMContent(popupNode)
-            .addTo(map);
-        });
-
         new mapboxgl.Marker(markerNode)
           .setLngLat(geometry.coordinates)
+          .setPopup(
+            new mapboxgl.Popup({ offset: 15 })
+            .setHTML(
+              "<h3>" +
+                properties.name +
+                "</h3><p>" +
+                properties.description +
+                "</p>"
+            )
+          )
           .addTo(map);
       });
     });
