@@ -28,20 +28,21 @@ function App() {
       const { lng, lat } = map.getCenter();
       const results = await fetchData({ long: lng, lat: lat });
       results.items.forEach((result) => {
+        const { geometry, properties } = result;
         const markerNode = document.createElement("div");
-        ReactDOM.render(<Marker id={result.properties.id} />, markerNode);
+        ReactDOM.render(<Marker id={properties.id} />, markerNode);
 
-        markerNode.addEventListener("click", (e) => {
+        map.on("click", (e) => {
           const popupNode = document.createElement("div");
-          ReactDOM.render(<Popup />, popupNode);
+          ReactDOM.render(<Popup props={properties}/>, popupNode);
           popUpRef.current
-            .setLngLat(result.geometry.coordinates)
+            .setLngLat(e.lngLat)
             .setDOMContent(popupNode)
             .addTo(map);
         });
 
         new mapboxgl.Marker(markerNode)
-          .setLngLat(result.geometry.coordinates)
+          .setLngLat(geometry.coordinates)
           .addTo(map);
       });
     });

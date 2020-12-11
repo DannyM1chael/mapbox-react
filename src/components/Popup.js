@@ -1,10 +1,11 @@
 import React from "react";
 
-const Popup = () => {
+const Popup = ({ props }) => {
+  const { id, name, description } = props;
   return (
-    <div id="popup-marker">
-      <h3>Marker</h3>
-      Description
+    <div id={`popup-${id}`}>
+      <h3>{name}</h3>
+      {description}
     </div>
   );
 };
